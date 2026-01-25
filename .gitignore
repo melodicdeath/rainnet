@@ -1,6 +1,6 @@
 __pycache__/
 logs/
-*.ipynb*
+# *.ipynb*
 /**.yml
 /**.yaml
 old/
@@ -19,3 +19,6 @@ config/*
 bash_scripts/
 out/
 predictions/
+# pixi environments
+.pixi/*
+!.pixi/config.toml
