@@ -8,7 +8,7 @@ path: "/mnt/arch/radar/storage/{year}/{month:02d}/{day:02d}/fmi/radar/composite/
 # Filename format
 filename: "{year}{month:02d}{day:02d}{hour:02d}{minute:02d}_fmi.radar.composite.lowest_FIN_SUOMI1.pgm.gz"
 # Importer used to load composites, options: pgm_gzip
-importer: hdf5
+importer: geotiff
 # Number of frames used as input
 input_block_length: 4
 # Number of frames that are predicted

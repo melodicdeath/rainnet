@@ -9,7 +9,7 @@ old/
 *.ckpt
 *.png
 notebooks/
-.vscode/
+# .vscode/
 db/
 results/
 *_local.py

@@ -1,4 +1,5 @@
 """Datamodule for FMI radar composite."""
+
 import h5py
 import torch
 import pytorch_lightning as pl
@@ -16,10 +17,9 @@ class FMICompositeDataModule(pl.LightningDataModule):
 
         self.db_path = dsconfig.pop("hdf5_path")
         if self.dsconfig["importer"] == "hdf5":
-            self.db = h5py.File(self.db_path, 'r')
+            self.db = h5py.File(self.db_path, "r")
         else:
             self.db = None
-        
 
     def prepare_data(self):
         # called only on 1 GPU
@@ -27,10 +27,18 @@ class FMICompositeDataModule(pl.LightningDataModule):
 
     def setup(self, stage):
         # called on every GPU
-        self.train_dataset = Rainnet_FMIComposite(split="train", db=self.db,  **self.dsconfig)
-        self.valid_dataset = Rainnet_FMIComposite(split="valid", db=self.db, **self.dsconfig)
-        self.test_dataset = Rainnet_FMIComposite(split="test", db=self.db, **self.dsconfig)
-        self.predict_dataset = Rainnet_FMIComposite(split="predict",db = self.db, **self.dsconfig)
+        self.train_dataset = Rainnet_FMIComposite(
+            split="train", db=self.db, **self.dsconfig
+        )
+        self.valid_dataset = Rainnet_FMIComposite(
+            split="valid", db=self.db, **self.dsconfig
+        )
+        self.test_dataset = Rainnet_FMIComposite(
+            split="test", db=self.db, **self.dsconfig
+        )
+        self.predict_dataset = Rainnet_FMIComposite(
+            split="predict", db=self.db, **self.dsconfig
+        )
 
     def train_dataloader(self):
         train_loader = DataLoader(
@@ -60,7 +68,7 @@ class FMICompositeDataModule(pl.LightningDataModule):
             shuffle=False,
         )
         return test_loader
-    
+
     def predict_dataloader(self):
         predict_loader = DataLoader(
             self.predict_dataset,
@@ -70,7 +78,7 @@ class FMICompositeDataModule(pl.LightningDataModule):
             collate_fn=_collate_fn,
         )
         return predict_loader
-    
+
     def teardown(self, stage=None):
         if self.dsconfig.importer == "hdf5":
             self.db.close()
@@ -79,7 +87,9 @@ class FMICompositeDataModule(pl.LightningDataModule):
         if hasattr(self, "train_dataset"):
             return len(self.train_dataset)
         else:
-            dummy_train_ds = Rainnet_FMIComposite(split="train", db=self.db,  **self.dsconfig)
+            dummy_train_ds = Rainnet_FMIComposite(
+                split="train", db=self.db, **self.dsconfig
+            )
             train_size = len(dummy_train_ds)
             del dummy_train_ds
             return train_size

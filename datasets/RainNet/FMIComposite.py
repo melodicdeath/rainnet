@@ -103,6 +103,8 @@ class FMIComposite(Dataset):
             self.importer = read_hdf5_db
             assert db is not None, "No HDF5 database file given!"
             self.db = db
+        elif importer == "geotiff":
+            self.importer = read_geotiff
         else:
             raise NotImplementedError(f"Importer {importer} not implemented!")
 
@@ -289,3 +291,7 @@ def read_hdf5_db(filename, db):
     """Read composite reflectivity (dBZ) from the hdf5 database"""
     data = np.array(db[filename])
     return data
+
+
+def read_geotiff(filename):
+    raise NotImplementedError

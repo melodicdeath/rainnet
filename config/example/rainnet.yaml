@@ -9,7 +9,7 @@ train_params:
     # cpu or cuda, depending on if using gpu
     device: cpu
     # number of multiprocessing workers for dataloaders
-    num_workers: 8
+    num_workers: 1
     # numbers of gpus to use, if training on cpu set to 0
     gpus: 0
 
