@@ -10,8 +10,9 @@ import numpy as np
 import pandas as pd
 from skimage.measure import block_reduce
 import torch
-from matplotlib.pyplot import imread
+from matplotlib.pyplot import imread, imsave
 from torch.utils.data import Dataset
+from pysteps.io.importers import import_fmi_geotiff
 
 
 class FMIComposite(Dataset):
@@ -150,10 +151,10 @@ class FMIComposite(Dataset):
         data = np.empty((self.num_frames, *self.input_image_size))
 
         # Check that window has correct length
-        if (window[-1] - window[0]).seconds / (self.timestep * 60) != (
+        if (window.iloc[-1] - window.iloc[0]).seconds / (self.timestep * 60) != (
             self.num_frames - 1
         ):
-            logging.info(f"Window {window[0]} - {window[-1]} wrong!")
+            logging.info(f"Window {window.iloc[0]} - {window.iloc[-1]} wrong!")
 
         for i, date in enumerate(window):
             if self.importer == read_pgm_composite:
@@ -177,6 +178,27 @@ class FMIComposite(Dataset):
                     )
                 )
                 im = self.importer(fn, no_data_value=-32)
+            elif self.importer == read_geotiff:
+                fn = Path(
+                    self.path.format(
+                        year=date.year,
+                        month=date.month,
+                        day=date.day,
+                        hour=date.hour,
+                        minute=date.minute,
+                        second=date.second,
+                    )
+                ) / Path(
+                    self.filename.format(
+                        year=date.year,
+                        month=date.month,
+                        day=date.day,
+                        hour=date.hour,
+                        minute=date.minute,
+                        second=date.second,
+                    )
+                )
+                im = self.importer(fn)
             else:
                 fn = date.strftime("%Y-%m-%d %H:%M:%S")
                 im = self.importer(fn, self.db)
@@ -190,13 +212,21 @@ class FMIComposite(Dataset):
             ):
                 # Upsample image
                 # Calculate window size
-                block_x = int(im.shape[0] / self.input_image_size[0])
-                block_y = int(im.shape[1] / self.input_image_size[1])
+                block_x = int(np.ceil(im.shape[0] / self.input_image_size[0]))
+                block_y = int(np.ceil(im.shape[1] / self.input_image_size[1]))
                 if self.upsampling_method == "average":
                     # Upsample by averaging
                     im = block_reduce(
                         im, func=np.nanmean, cval=0, block_size=(block_x, block_y)
                     )
+
+                    # For visualization purposes - save one image to check
+                    # We use a static counter or simply overwrite/save conditionally
+                    # Here we just overwrite for simplicity as requested to "check effect"
+                    # try:
+                    #     imsave("debug_resized_image.png", im)
+                    # except Exception as e:
+                    #     logging.warning(f"Failed to save debug image: {e}")
                 else:
                     raise NotImplementedError(
                         f"Upsampling {self.upsampling_method} not yet implemented!"
@@ -294,4 +324,7 @@ def read_hdf5_db(filename, db):
 
 
 def read_geotiff(filename):
-    raise NotImplementedError
+    data, _, _ = import_fmi_geotiff(filename)
+    # Replace NaNs with minimum value (e.g. -32 dBZ) to prevent errors in model
+    data = np.nan_to_num(data, nan=-32.0)
+    return data
