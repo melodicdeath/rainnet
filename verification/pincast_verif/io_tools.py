@@ -34,8 +34,8 @@ def write_image(group: h5py.Group, ds_name: str, data: np.ndarray, what_attrs: d
     dataset = group.create_dataset(
         ds_name, data=data, dtype="uint8", compression="gzip", compression_opts=9
     )
-    dataset.attrs["CLASS"] = np.string_("IMAGE")
-    dataset.attrs["IMAGE_VERSION"] = np.string_("1.2")
+    dataset.attrs["CLASS"] = np.bytes_("IMAGE")
+    dataset.attrs["IMAGE_VERSION"] = np.bytes_("1.2")
 
     ds_what = group.require_group("what")
     ds_what.attrs["quantity"] = what_attrs["quantity"]
@@ -123,7 +123,7 @@ def rainrate_to_dBZ(
     zerovalue=-32,
 ) -> np.ndarray:
     zeros = R < thresh
-    Z = zr_a * R ** zr_b  # R -> Z
+    Z = zr_a * R**zr_b  # R -> Z
     Z = 10 * np.log10(Z)  # Z -> dBZ
     Z[zeros] = zerovalue  # fill values under threshold with zerovalues
     return Z

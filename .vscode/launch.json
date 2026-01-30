@@ -9,6 +9,10 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
+            "args": [
+                "/home/zhangting/src/rainnet/checkpoints/20260127004516.ckpt",
+                "/home/zhangting/src/rainnet/config/example"
+            ],
             "console": "integratedTerminal"
         }
     ]

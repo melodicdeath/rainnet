@@ -1,5 +1,5 @@
-"""This script will run nowcasting prediction for the L-CNN model implementation
-"""
+"""This script will run nowcasting prediction for the L-CNN model implementation"""
+
 import argparse
 from pathlib import Path
 import pytorch_lightning as pl
@@ -22,7 +22,8 @@ def run(checkpointpath, configpath) -> None:
 
     datamodel = Rainnet_FMICompositeDataModule(dsconf, modelconf.train_params)
 
-    model = RainNet(modelconf).load_from_checkpoint(checkpointpath, config=modelconf)
+    model = RainNet(modelconf)
+    # .load_from_checkpoint(checkpointpath, config=modelconf)
 
     output_writer = RainnetHDF5Writer(**modelconf.prediction_output)
 
@@ -30,7 +31,7 @@ def run(checkpointpath, configpath) -> None:
     trainer = pl.Trainer(
         profiler="pytorch",
         logger=tb_logger,
-        gpus=modelconf.train_params.gpus,
+        # gpus=modelconf.train_params.gpus,
         callbacks=[output_writer],
     )
 

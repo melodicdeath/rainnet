@@ -63,7 +63,7 @@ train_params:
     # loss function parameters
     loss : 
         # loss function to use, choose one implemented in rainnet
-        name : "ms_ssim"
+        name : "log_cosh"
         # key-value arguments of the loss function, change based on the loss function,
         # look for the arguments from the loss function definition, for no arguments pass an empty dict ({})
         kwargs : 
