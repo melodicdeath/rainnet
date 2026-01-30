@@ -1,4 +1,5 @@
 """Output functions."""
+
 import matplotlib as mpl
 
 mpl.use("agg")
@@ -86,12 +87,14 @@ def plot_1h_plus_1h_timeseries(model, dataset, indices=[10, 529]):
             plot_dbz_image(
                 to_dbz(arr_1[0][i, ...]).detach().cpu().numpy().squeeze(),
                 window_1[i],
-                "observation")
+                "observation",
+            )
         for i in range(7):
             plot_dbz_image(
                 to_dbz(arr_1[1][i, ...]).detach().cpu().numpy().squeeze(),
                 window_1[5 + i],
-                "observation")
+                "observation",
+            )
         # Plot target
         window_2 = dataset.get_window(idx + 5)
         arr_2 = dataset[idx + 5]
@@ -99,19 +102,22 @@ def plot_1h_plus_1h_timeseries(model, dataset, indices=[10, 529]):
             plot_dbz_image(
                 to_dbz(arr_2[0][i, ...]).detach().cpu().numpy().squeeze(),
                 window_2[i],
-                "target")
+                "target",
+            )
         for i in range(7):
             plot_dbz_image(
                 to_dbz(arr_2[1][i, ...]).detach().cpu().numpy().squeeze(),
                 window_2[5 + i],
-                "target")
+                "target",
+            )
         # Plot forecast
         output = model(torch.unsqueeze(arr[0], 0).float(), future_steps=15)
         for i in range(12):
             plot_dbz_image(
                 to_dbz(output[0, i, ...]).detach().cpu().numpy().squeeze(),
                 window_[5 + i],
-                "nowcast")
+                "nowcast",
+            )
 
 
 def plot_dbz_image(dbz_arr, day, datatype, figsize=(12, 10)):
@@ -132,13 +138,14 @@ def plot_dbz_image(dbz_arr, day, datatype, figsize=(12, 10)):
     cbar_ax_kws = {
         "width": "5%",  # width = 5% of parent_bbox width
         "height": "100%",
-        "loc": 'lower left',
-        "bbox_to_anchor": (1.01, 0., 1, 1),
+        "loc": "lower left",
+        "bbox_to_anchor": (1.01, 0.0, 1, 1),
         "borderpad": 0,
     }
     qty = "DBZH"
     fig, ax = plt.subplots(
-        nrows=1, ncols=1, figsize=figsize, sharex='col', sharey='row')
+        nrows=1, ncols=1, figsize=figsize, sharex="col", sharey="row"
+    )
 
     cax = inset_axes(ax, bbox_transform=ax.transAxes, **cbar_ax_kws)
 
@@ -149,15 +156,20 @@ def plot_dbz_image(dbz_arr, day, datatype, figsize=(12, 10)):
     # Final image is flipped
     ax.pcolormesh(
         np.flipud(dbz_arr),
-        cmap=cmap, norm=norm, zorder=10,
+        cmap=cmap,
+        norm=norm,
+        zorder=10,
     )
 
     # Add colorbar
     cbar = plt.colorbar(
         mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
         format=mpl.ticker.StrMethodFormatter(QTY_FORMATS[qty]),
-        orientation='vertical', cax=cax, ax=None)
-    cbar.set_label(label=COLORBAR_TITLES[qty], weight='bold')
+        orientation="vertical",
+        cax=cax,
+        ax=None,
+    )
+    cbar.set_label(label=COLORBAR_TITLES[qty], weight="bold")
     cbar.ax.tick_params(labelsize=12)
 
     # No ticklabels
@@ -171,38 +183,46 @@ def plot_dbz_image(dbz_arr, day, datatype, figsize=(12, 10)):
 
 
 def debug_training_plot(
-        epoch, batch, time_list, inputs, outputs, targets,
-        quantity="DBZH", write_fig=True):
+    epoch, batch, time_list, inputs, outputs, targets, quantity="DBZH", write_fig=True
+):
     cmap, norm = get_colormap(quantity)
     if outputs.ndim == 4:
-    # If we lack a channel dimension, add one empty
-    # (with B,T,H,W instead of B,T,C,H,W)
-        outputs = outputs[:,:,None,:,:]
-        inputs = inputs[:,:,None,:,:]
-        targets = targets[:,:,None,:,:]
-    if outputs.shape[1] == 1:  
+        # If we lack a channel dimension, add one empty
+        # (with B,T,H,W instead of B,T,C,H,W)
+        outputs = outputs[:, :, None, :, :]
+        inputs = inputs[:, :, None, :, :]
+        targets = targets[:, :, None, :, :]
+    if outputs.shape[1] == 1:
         # If T : num of timesteps is 1
-        fig, axarr = plt.subplots(outputs.shape[1], 3, figsize=(15,4))
+        fig, axarr = plt.subplots(outputs.shape[1], 3, figsize=(15, 4))
         axarr = axarr[..., np.newaxis]
-    else : 
-        fig, axarr = plt.subplots(3, outputs.shape[1], figsize=(outputs.shape[1] * 4, 15))
-    
+    else:
+        fig, axarr = plt.subplots(
+            3, outputs.shape[1], figsize=(outputs.shape[1] * 4, 15)
+        )
+
     for t in range(outputs.shape[1]):
         try:
             axarr[0][t].imshow(
                 inputs[0, t, 0].detach().cpu().numpy(),
-                cmap=cmap, norm=norm, origin="lower",
+                cmap=cmap,
+                norm=norm,
+                origin="lower",
             )
         except IndexError:
-            axarr[0][t].axis('off')
+            axarr[0][t].axis("off")
 
         axarr[1][t].imshow(
             targets[0, t, 0].detach().cpu().numpy(),
-            cmap=cmap, norm=norm, origin="lower",
+            cmap=cmap,
+            norm=norm,
+            origin="lower",
         )
         axarr[2][t].imshow(
             outputs[0, t, 0].detach().cpu().numpy(),
-            cmap=cmap, norm=norm, origin="lower",
+            cmap=cmap,
+            norm=norm,
+            origin="lower",
         )
 
         if time_list is not None:
@@ -216,7 +236,7 @@ def debug_training_plot(
 
     fig.subplots_adjust(wspace=0.2, hspace=0.01)
     if write_fig:
-        plt.savefig(f"{epoch:03d}_{batch:03d}.png", bbox_inches='tight')
+        plt.savefig(f"{epoch:03d}_{batch:03d}.png", bbox_inches="tight")
     plt.close()
     return fig
 
@@ -226,32 +246,32 @@ def get_colormap(quantity):
         cmap = colors.ListedColormap(["r", "b", "g", "y", "k", "c"])
         norm = colors.BoundaryNorm(np.arange(0.5, 7.5), cmap.N)
     elif "VRAD" in quantity:
-        cmap = "pyart_BuDRd18"
+        cmap = "BuDRd18"
         norm = None
     elif "DBZH" in quantity:
-        cmap = "pyart_NWSRef"
+        cmap = "NWSRef"
         norm = None
     elif quantity == "TH":
-        cmap = "pyart_NWSRef"
+        cmap = "NWSRef"
         norm = None
     elif "SNR" in quantity or "LOG" in quantity:
-        cmap = "pyart_Carbone17"
+        cmap = "Carbone17"
         norm = None
     elif quantity == "KDP":
-        cmap = "pyart_Theodore16"
+        cmap = "Theodore16"
         norm = None
     elif quantity == "PHIDP":
-        cmap = "pyart_Wild25"
+        cmap = "Wild25"
         norm = None
     elif quantity == "RHOHV":
         bounds = [0.1, 0.2, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.94, 0.96, 0.98, 0.99, 1.05]
         norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds))
-        cmap = cm.get_cmap("pyart_RefDiff", len(bounds))
+        cmap = cm.get_cmap("RefDiff", len(bounds))
     elif "WRAD" in quantity:
-        cmap = "pyart_NWS_SPW"
+        cmap = "NWS_SPW"
         norm = None
     elif quantity == "ZDR":
-        cmap = "pyart_RefDiff"
+        cmap = "RefDiff"
         norm = None
     else:
         cmap = cm.jet

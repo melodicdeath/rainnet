@@ -21,7 +21,7 @@ timestep: 5
 # Bounding box used as Python indices
 # written as [x1, x2, y1, x2] that corresponds to image[x1:x2, y1:y2]
 # bbox: [604, 1116, 125, 637]
-bbox: [839,4471,1314,6403]
+bbox: [545, 4537, 1345, 6545]
 # Original Image size
 # image_size: [512, 512]
 image_size: [5120, 7168]

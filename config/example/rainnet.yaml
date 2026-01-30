@@ -26,9 +26,9 @@ train_params:
     # Run validation after every n epochs
     val_check_interval: 0.5
     # number of batches to validate on
-    val_batches : 0.005
+    val_batches : 0.05
     # number of baches to train on (per epoch)
-    train_batches : 0.005
+    train_batches : 0.05
 
     ### Leadtime related parameters ###
     # How many leadtimes to run validation, testing ?

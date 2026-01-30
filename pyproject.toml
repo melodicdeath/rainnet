@@ -26,6 +26,19 @@ packages = [
     "datamodules",
 ]
 
+[tool.pixi.feature.gpu]
+channels = ["nvidia", "pytorch", "conda-forge"]
+system-requirements = { cuda = "12.4" }
+
+[tool.pixi.feature.gpu.dependencies]
+# pytorch-cuda = "11.8.*"
+# cuda-version = "11.8.*"
+pytorch-gpu = ">=2.5.1,<3"
+torchvision = "==0.20.1"
+
+[tool.pixi.environments]
+gpu = ["gpu"]
+
 [tool.pixi.pypi-dependencies]
 rainnet = { path = ".", editable = true }
 
