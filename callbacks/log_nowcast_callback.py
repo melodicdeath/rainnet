@@ -27,11 +27,11 @@ class LogNowcast(Callback):
     ) -> None:
 
         y_hat = outputs["prediction"]
-        # total_loss = outputs["loss"]
+        total_loss = outputs["loss"]
         x, y, idx = batch
         to_dBZ = trainer.datamodule.train_dataset.scaled_to_dbz
-        # pl_module.logger.experiment.add_scalars(
-        #    "losses", {"train_loss": total_loss}, global_step=pl_module.global_step)
+        pl_module.logger.experiment.add_scalars(
+           "losses", {"train_loss": total_loss}, global_step=pl_module.global_step)
         # pl_module.logger.experiment.add_scalars(
         #    "batch_index", {"index": batch_idx[0]}, global_step=pl_module.global_step)
         if (pl_module.global_step % self.train_display) == 0:

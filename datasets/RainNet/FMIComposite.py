@@ -207,7 +207,7 @@ class FMIComposite(Dataset):
 
             if self.use_bbox:
                 im = im[self.bbox_x_slice, self.bbox_y_slice]
-
+                
             if (
                 im.shape[0] != self.input_image_size[0]
                 or im.shape[1] != self.input_image_size[1]
@@ -234,7 +234,7 @@ class FMIComposite(Dataset):
                     )
 
             data[i, ...] = im
-
+        
         inputs, outputs = self.postprocessing(data)
 
         return inputs, outputs, idx
