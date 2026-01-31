@@ -14,7 +14,6 @@ class FMICompositeDataModule(pl.LightningDataModule):
         self.save_hyperparameters()
         self.dsconfig = dsconfig
         self.train_params = train_params
-
         self.db_path = dsconfig.pop("hdf5_path")
         if self.dsconfig["importer"] == "hdf5":
             self.db = h5py.File(self.db_path, "r")

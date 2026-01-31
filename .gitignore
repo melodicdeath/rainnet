@@ -14,7 +14,7 @@ db/
 results/
 *_local.py
 athras-*
-config/*
+# config/*
 !config/example/
 !config/README.md
 bash_scripts/

@@ -31,7 +31,8 @@ def run(checkpointpath, configpath) -> None:
     trainer = pl.Trainer(
         profiler="pytorch",
         logger=tb_logger,
-        # gpus=modelconf.train_params.gpus,
+        devices=modelconf.train_params.gpus,
+        accelerator="gpu",
         callbacks=[output_writer],
     )
 
