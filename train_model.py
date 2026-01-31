@@ -67,13 +67,13 @@ def main(configpath, checkpoint=None):
     trainer = pl.Trainer(
         # profiler=profiler,
         logger=tb_logger,
-        val_check_interval=modelconf.train_params.val_check_interval,
+        # val_check_interval=modelconf.train_params.val_check_interval,
         max_epochs=modelconf.train_params.max_epochs,
         max_time=modelconf.train_params.max_time,
         accelerator="gpu",
         devices=modelconf.train_params.gpus,
-        limit_train_batches=modelconf.train_params.train_batches,
-        limit_val_batches=modelconf.train_params.val_batches,
+        # limit_train_batches=modelconf.train_params.train_batches,
+        # limit_val_batches=modelconf.train_params.val_batches,
         callbacks=[
             EarlyStopping(**modelconf.train_params.early_stopping),
             model_ckpt,

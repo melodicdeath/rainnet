@@ -14,6 +14,7 @@ import torch
 from matplotlib.pyplot import imread, imsave
 from torch.utils.data import Dataset
 from pysteps.io.importers import import_fmi_geotiff
+from datetime import datetime
 
 
 class FMIComposite(Dataset):
@@ -328,3 +329,4 @@ def read_geotiff(filename):
     # Replace NaNs with minimum value (e.g. -32 dBZ) to prevent errors in model
     data = np.nan_to_num(data, nan=-32.0)
     return data
+    

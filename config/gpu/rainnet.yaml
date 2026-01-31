@@ -9,22 +9,22 @@ train_params:
     # cpu or cuda, depending on if using gpu
     device: cuda
     # number of multiprocessing workers for dataloaders
-    num_workers: 4
+    num_workers: 8
     # numbers of gpus to use, if training on cpu set to 0
     gpus: 1
 
     ### batch sizes ###
-    train_batch_size: 1
-    valid_batch_size: 1
-    test_batch_size: 1
-    predict_batch_size : 8
+    train_batch_size: 32
+    valid_batch_size: 64
+    test_batch_size: 64
+    predict_batch_size : 64
 
     ### training length limiting parameters ###
     max_epochs: 30
     # Max time used for training (days:hours:mins:secs)
     max_time: "03:00:00:00"
     # Run validation after every n epochs
-    val_check_interval: 0.5
+    val_check_interval: 1
     # number of batches to validate on
     val_batches : 0.05
     # number of baches to train on (per epoch)
