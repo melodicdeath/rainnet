@@ -7,6 +7,7 @@ import logging
 
 import h5py
 import numpy as np
+import cv2
 import pandas as pd
 from skimage.measure import block_reduce
 import torch
@@ -216,17 +217,16 @@ class FMIComposite(Dataset):
                 block_y = int(np.ceil(im.shape[1] / self.input_image_size[1]))
                 if self.upsampling_method == "average":
                     # Upsample by averaging
-                    im = block_reduce(
-                        im, func=np.nanmean, cval=0, block_size=(block_x, block_y)
+                    # im = block_reduce(
+                    #     im, func=np.nanmean, cval=0, block_size=(block_x, block_y)
+                    # )
+                    # Use OpenCV for speed (much faster than block_reduce)
+                    # cv2.resize expects (width, height), so we swap the dimensions from (H, W)
+                    im = cv2.resize(
+                        im,
+                        (self.input_image_size[1], self.input_image_size[0]),
+                        interpolation=cv2.INTER_AREA,
                     )
-
-                    # For visualization purposes - save one image to check
-                    # We use a static counter or simply overwrite/save conditionally
-                    # Here we just overwrite for simplicity as requested to "check effect"
-                    # try:
-                    #     imsave("debug_resized_image.png", im)
-                    # except Exception as e:
-                    #     logging.warning(f"Failed to save debug image: {e}")
                 else:
                     raise NotImplementedError(
                         f"Upsampling {self.upsampling_method} not yet implemented!"
